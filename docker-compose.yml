@@ -1,0 +1,58 @@
+version: "3.9"
+
+services:
+  api-gateway:
+    build: ./services/api-gateway
+    ports:
+      - "4000:4000"
+    environment:
+      POST_SERVICE_URL: http://post-service:4001
+      AUTH_SERVICE_URL: http://auth-service:4002
+      JWT_PUBLIC_KEY: dev-public-key
+    depends_on:
+      - post-service
+
+  post-service:
+    build: ./services/post-service
+    ports:
+      - "4001:4001"
+    environment:
+      POSTGRES_URL: postgres://connectx:connectx@postgres:5432/connectx_posts
+      KAFKA_BROKERS: kafka:9092
+      JWT_PUBLIC_KEY: dev-public-key
+    depends_on:
+      - postgres
+      - kafka
+
+  postgres:
+    image: postgres:16
+    environment:
+      POSTGRES_USER: connectx
+      POSTGRES_PASSWORD: connectx
+      POSTGRES_DB: connectx_posts
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  kafka:
+    image: bitnami/kafka:3.7
+    environment:
+      KAFKA_CFG_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_CFG_LISTENERS: PLAINTEXT://:9092
+      KAFKA_CFG_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
+      KAFKA_CFG_AUTO_CREATE_TOPICS_ENABLE: "true"
+    depends_on:
+      - zookeeper
+    ports:
+      - "9092:9092"
+
+  zookeeper:
+    image: bitnami/zookeeper:3.9
+    environment:
+      ALLOW_ANONYMOUS_LOGIN: "yes"
+    ports:
+      - "2181:2181"
+
+volumes:
+  postgres_data: {}
