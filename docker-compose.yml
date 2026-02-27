@@ -2,7 +2,9 @@ version: "3.9"
 
 services:
   api-gateway:
-    build: ./services/api-gateway
+    build:
+      context: .
+      dockerfile: services/api-gateway/Dockerfile
     ports:
       - "4000:4000"
     environment:
@@ -13,7 +15,9 @@ services:
       - post-service
 
   post-service:
-    build: ./services/post-service
+    build:
+      context: .
+      dockerfile: services/post-service/Dockerfile
     ports:
       - "4001:4001"
     environment:
