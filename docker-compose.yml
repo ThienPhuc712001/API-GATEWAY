@@ -36,7 +36,7 @@ services:
       - postgres_data:/var/lib/postgresql/data
 
   kafka:
-    image: bitnami/kafka:3.7
+    image: bitnami/kafka:latest
     environment:
       KAFKA_CFG_ZOOKEEPER_CONNECT: zookeeper:2181
       KAFKA_CFG_LISTENERS: PLAINTEXT://:9092
@@ -48,7 +48,7 @@ services:
       - "9092:9092"
 
   zookeeper:
-    image: bitnami/zookeeper:3.9
+    image: bitnami/zookeeper:latest
     environment:
       ALLOW_ANONYMOUS_LOGIN: "yes"
     ports:
